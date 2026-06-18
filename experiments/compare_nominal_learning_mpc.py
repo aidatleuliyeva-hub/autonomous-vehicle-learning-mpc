@@ -59,6 +59,7 @@ def run_simulation(
     compensator_parameters: (
         dict[str, float] | None
     ) = None,
+    steering_bias: float = radians(0.45),
 ) -> SimulationResult:
     linear_model = LinearBicycleModel(
         nominal_parameters
@@ -97,8 +98,6 @@ def run_simulation(
     )
     previous_steering = 0.0
     reference_index = 0
-
-    steering_bias = radians(0.45)
 
     vehicle_states = []
     control_states = []
