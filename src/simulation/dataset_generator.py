@@ -82,7 +82,16 @@ def generate_scenario_data(
         scenario.random_seed
     )
 
-    vehicle_state = np.zeros(5)
+    vehicle_state = np.array(
+        [
+            scenario.path.x[0],
+            scenario.path.y[0],
+            scenario.path.heading[0],
+            0.0,
+            0.0,
+        ],
+        dtype=float,
+    )
     previous_steering = 0.0
     reference_index = 0
 

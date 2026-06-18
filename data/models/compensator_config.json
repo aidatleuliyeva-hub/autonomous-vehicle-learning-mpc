@@ -1,0 +1,6 @@
+{
+  "lateral_gain": 8.0,
+  "heading_gain": 0.0,
+  "correction_limit": 0.004363323129985824,
+  "filter_coefficient": 0.15
+}
