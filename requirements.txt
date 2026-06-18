@@ -8,3 +8,4 @@ osqp
 control
 pytest
 tqdm
+joblib

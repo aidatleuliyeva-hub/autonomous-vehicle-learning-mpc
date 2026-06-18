@@ -40,6 +40,7 @@ def vehicle_parameters(
 def main() -> None:
     double_lane_path = double_lane_change_path(
         length=180.0,
+        spacing=0.1,
         first_change=45.0,
         second_change=125.0,
         transition_length=12.0,
@@ -47,6 +48,7 @@ def main() -> None:
 
     sine_path = sinusoidal_path(
         length=180.0,
+        spacing=0.1,
         amplitude=2.0,
         wavelength=70.0,
     )
@@ -114,7 +116,7 @@ def main() -> None:
         ),
         DatasetScenario(
             name="straight_steering_bias",
-            path=straight_path(length=180.0),
+            path=straight_path(length=180.0, spacing=0.1,),
             nominal_parameters=vehicle_parameters(15.0),
             real_parameters=vehicle_parameters(
                 speed=15.0,

@@ -49,10 +49,10 @@ class DatasetScenario:
         float,
         float,
     ] = (
-        0.02,
-        0.005,
-        0.005,
-        radians(0.05),
+        0.0,
+        0.0,
+        0.0,
+        0.0,
     )
 
     random_seed: int = 42
