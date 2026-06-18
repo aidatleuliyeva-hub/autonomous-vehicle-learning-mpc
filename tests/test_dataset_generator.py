@@ -8,6 +8,8 @@ from src.simulation.dataset_generator import (
     TARGET_COLUMNS,
     DatasetScenario,
     generate_scenario_data,
+    POLICY_FEATURE_COLUMNS,
+    POLICY_TARGET_COLUMN,
 )
 from src.simulation.reference_paths import straight_path
 
@@ -38,8 +40,13 @@ def test_dataset_generator_produces_finite_samples() -> None:
         maximum_duration=3.0,
     )
 
-    required_columns = (
-        FEATURE_COLUMNS + TARGET_COLUMNS
+    required_columns = list(
+        dict.fromkeys(
+            FEATURE_COLUMNS
+            + TARGET_COLUMNS
+            + POLICY_FEATURE_COLUMNS
+            + [POLICY_TARGET_COLUMN]
+        )
     )
 
     assert len(dataset) > 10

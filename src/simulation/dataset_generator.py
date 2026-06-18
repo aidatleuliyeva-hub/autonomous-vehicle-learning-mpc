@@ -34,6 +34,21 @@ TARGET_COLUMNS = [
     "heading_prediction_error",
 ]
 
+POLICY_FEATURE_COLUMNS = [
+    "lateral_velocity",
+    "yaw_rate",
+    "lateral_error",
+    "heading_error",
+    "previous_steering",
+    "curvature",
+    "curvature_preview_5",
+    "curvature_preview_10",
+    "curvature_preview_20",
+    "velocity",
+]
+
+POLICY_TARGET_COLUMN = "steering"
+
 
 @dataclass(frozen=True)
 class DatasetScenario:
@@ -238,6 +253,16 @@ def generate_scenario_data(
                     prediction_error[2],
                 "heading_prediction_error":
                     prediction_error[3],
+                "previous_steering": previous_steering,
+                "curvature_preview_5": curvature_preview[
+                    min(5, prediction_horizon - 1)
+                ],
+                "curvature_preview_10": curvature_preview[
+                    min(10, prediction_horizon - 1)
+                ],
+                "curvature_preview_20": curvature_preview[
+                    min(20, prediction_horizon - 1)
+                ],
             }
         )
 
