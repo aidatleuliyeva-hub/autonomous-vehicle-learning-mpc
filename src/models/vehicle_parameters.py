@@ -21,3 +21,4 @@ class VehicleParameters:
     gravity: float = 9.81
 
     max_steering_angle: float = radians(25.0)
+    max_steering_rate: float = radians(60.0)
