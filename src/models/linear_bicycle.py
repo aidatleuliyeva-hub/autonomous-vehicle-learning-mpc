@@ -121,3 +121,39 @@ class LinearBicycleModel:
         )
 
         return ad, bd, cd, dd
+    
+    def discrete_tracking_matrices(
+        self,
+        sample_time: float,
+    ) -> tuple[Matrix, Matrix, Matrix]:
+        """Discretize steering and curvature inputs."""
+
+        if sample_time <= 0.0:
+            raise ValueError("sample_time must be positive")
+
+        a, b, c, _ = self.continuous_matrices()
+        curvature_input = (
+            self.curvature_disturbance_matrix()
+        )
+
+        combined_inputs = np.hstack(
+            [b, curvature_input]
+        )
+
+        combined_feedthrough = np.zeros((2, 2))
+
+        ad, combined_bd, _, _, _ = cont2discrete(
+            (
+                a,
+                combined_inputs,
+                c,
+                combined_feedthrough,
+            ),
+            sample_time,
+            method="zoh",
+        )
+
+        steering_bd = combined_bd[:, [0]]
+        curvature_bd = combined_bd[:, [1]]
+
+        return ad, steering_bd, curvature_bd

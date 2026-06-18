@@ -71,3 +71,19 @@ def test_mpc_reduces_tracking_error() -> None:
 
     assert final_error < initial_error
     assert final_error < 0.05
+
+
+def test_mpc_anticipates_positive_curvature() -> None:
+    controller = MPCController()
+
+    curvature_preview = np.full(
+        controller.prediction_horizon,
+        0.01,
+    )
+
+    steering = controller.control(
+        np.zeros(4),
+        curvature_preview=curvature_preview,
+    )
+
+    assert steering > 0.0

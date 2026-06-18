@@ -29,8 +29,10 @@ class MPCController:
         self.sample_time = sample_time
         self.prediction_horizon = prediction_horizon
 
-        self.ad, self.bd, _, _ = (
-            self.model.discrete_matrices(sample_time)
+        self.ad, self.bd, self.ed = (
+            self.model.discrete_tracking_matrices(
+                sample_time
+            )
         )
 
         self.q_matrix = (
@@ -53,6 +55,9 @@ class MPCController:
 
         self._initial_state = cp.Parameter(4)
         self._previous_input = cp.Parameter()
+        self._curvature_preview = cp.Parameter(
+            prediction_horizon
+        )
 
         steering_limit = (
             self.model.p.max_steering_angle
@@ -86,6 +91,8 @@ class MPCController:
                 == self.ad @ self._states[:, step]
                 + self.bd.flatten()
                 * self._inputs[0, step]
+                + self.ed.flatten()
+                * self._curvature_preview[step]
             )
 
             constraints.extend(
@@ -136,6 +143,7 @@ class MPCController:
         self,
         state: Array,
         previous_steering: float = 0.0,
+        curvature_preview: Array | None = None,
     ) -> float:
         state = np.asarray(state, dtype=float)
 
@@ -145,10 +153,33 @@ class MPCController:
         self._initial_state.value = state
         self._previous_input.value = previous_steering
 
+        if curvature_preview is None:
+            curvature_preview = np.zeros(
+                self.prediction_horizon
+            )
+
+        curvature_preview = np.asarray(
+            curvature_preview,
+            dtype=float,
+        )
+
+        if curvature_preview.shape != (
+            self.prediction_horizon,
+        ):
+            raise ValueError(
+                "curvature_preview must have shape "
+                f"({self.prediction_horizon},)"
+            )
+
+        self._curvature_preview.value = curvature_preview
+
         self._problem.solve(
             solver=cp.OSQP,
             warm_start=True,
             verbose=False,
+            max_iter=50_000,
+            eps_abs=1e-5,
+            eps_rel=1e-5,
         )
 
         valid_statuses = {
